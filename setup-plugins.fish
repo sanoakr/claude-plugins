@@ -38,6 +38,23 @@ function parse_plugin --argument-names entry
 end
 
 function marketplace_short --argument-names mp
+    # known_marketplaces.json から owner/repo → 登録名を解決
+    set -l known "$HOME/.claude/plugins/known_marketplaces.json"
+    if test -f $known; and command -q python3
+        set -l resolved (python3 -c "
+import json
+data = json.load(open('$known'))
+for name, info in data.items():
+    if info.get('source', {}).get('repo') == '$mp':
+        print(name)
+        break
+" 2>/dev/null)
+        if test -n "$resolved"
+            echo $resolved
+            return
+        end
+    end
+    # フォールバック: repo 名の末尾部分
     string replace -r '.+/' '' -- $mp
 end
 
@@ -49,13 +66,14 @@ function ensure_marketplace --argument-names mp
 end
 
 function install_plugin --argument-names name mp
-    set -l full "$name@"(marketplace_short $mp)
+    set -l mp_short (marketplace_short $mp)
+    set -l full "$name@$mp_short"
     set -l installed (claude plugin list 2>&1)
     if string match -q "*$name@*" -- $installed
         echo "already installed"
         return 0
     end
-    set -l output (claude plugin install $name 2>&1)
+    set -l output (claude plugin install $full 2>&1)
     if test $status -eq 0
         echo "ok"
         return 0
