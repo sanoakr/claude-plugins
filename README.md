@@ -11,9 +11,31 @@ cd ~/ai-plugin
 ./setup-plugins.fish
 ```
 
+## 使い方
+
+```fish
+# 全プラグインをインストール・更新
+./setup-plugins.fish
+
+# プラグインを追加（インストール → コミット → プッシュまで自動）
+./setup-plugins.fish add <plugin-name>
+./setup-plugins.fish add <plugin-name>@<owner/marketplace-repo>
+
+# プラグインを削除（アンインストール → コミット → プッシュまで自動）
+./setup-plugins.fish remove <plugin-name>
+
+# 設定済みプラグインの一覧
+./setup-plugins.fish list
+
+# リモートから pull して全プラグインを同期（別 PC での初回同期に）
+./setup-plugins.fish sync
+```
+
 ## 管理対象
 
-### プラグイン（Anthropic 公式）
+### プラグイン
+
+`plugins.conf` で管理。現在のプラグイン：
 
 | プラグイン | 用途 |
 |-----------|------|
@@ -27,23 +49,12 @@ cd ~/ai-plugin
 
 `mcp-servers.json` に定義。セットアップ時に `~/.claude/mcp_servers.json` へマージされる。
 
-## コマンドリファレンス
-
-```fish
-# プラグイン操作
-claude plugin list                       # 一覧
-claude plugin install <name>             # インストール
-claude plugin update <name>              # 更新
-claude plugin uninstall <name>           # 削除
-claude plugin marketplace list           # マーケットプレイス一覧
-claude plugin marketplace add owner/repo # マーケットプレイス追加
-```
-
 ## ファイル構成
 
 ```
 ai-plugin/
 ├── setup-plugins.fish   # セットアップスクリプト
+├── plugins.conf         # プラグインリスト（これを編集して共有）
 ├── mcp-servers.json     # MCP サーバー設定（共有用）
 ├── README.md
 └── .gitignore
