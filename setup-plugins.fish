@@ -66,8 +66,17 @@ function install_plugin --argument-names name mp
 end
 
 function get_plugin_description --argument-names name mp
+    set -l desc_file "$REPO_DIR/plugins.desc"
+    # 日本語説明ファイルから取得
+    if test -f $desc_file
+        set -l ja (grep "^$name=" $desc_file | head -1 | sed "s/^$name=//")
+        if test -n "$ja"
+            echo $ja
+            return
+        end
+    end
+    # フォールバック: キャッシュの plugin.json から英語説明を取得
     set -l mp_short (marketplace_short $mp)
-    # インストール済みキャッシュから取得
     for json in $HOME/.claude/plugins/cache/$mp_short/$name/*/.
         set -l pjson (dirname $json)/.claude-plugin/plugin.json
         if test -f $pjson; and command -q python3
@@ -78,7 +87,7 @@ function get_plugin_description --argument-names name mp
             end
         end
     end
-    # マーケットプレイスから取得
+    # フォールバック: マーケットプレイスから英語説明を取得
     set -l mkt "$HOME/.claude/plugins/marketplaces/$mp_short/.claude-plugin/marketplace.json"
     if test -f $mkt; and command -q python3
         set -l desc (python3 -c "
@@ -98,7 +107,7 @@ for p in data.get('plugins', []):
 end
 
 function git_commit_and_push --argument-names msg
-    git -C $REPO_DIR add plugins.conf mcp-servers.json 2>/dev/null
+    git -C $REPO_DIR add plugins.conf plugins.desc mcp-servers.json 2>/dev/null
     if git -C $REPO_DIR diff --cached --quiet
         echo "  No changes to commit."
         return 0
