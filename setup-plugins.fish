@@ -65,6 +65,38 @@ function install_plugin --argument-names name mp
     end
 end
 
+function get_plugin_description --argument-names name mp
+    set -l mp_short (marketplace_short $mp)
+    # インストール済みキャッシュから取得
+    for json in $HOME/.claude/plugins/cache/$mp_short/$name/*/.
+        set -l pjson (dirname $json)/.claude-plugin/plugin.json
+        if test -f $pjson; and command -q python3
+            set -l desc (python3 -c "import json; print(json.load(open('$pjson')).get('description',''))" 2>/dev/null)
+            if test -n "$desc"
+                echo $desc
+                return
+            end
+        end
+    end
+    # マーケットプレイスから取得
+    set -l mkt "$HOME/.claude/plugins/marketplaces/$mp_short/.claude-plugin/marketplace.json"
+    if test -f $mkt; and command -q python3
+        set -l desc (python3 -c "
+import json, sys
+data = json.load(open('$mkt'))
+for p in data.get('plugins', []):
+    if p.get('name') == '$name':
+        print(p.get('description', ''))
+        break
+" 2>/dev/null)
+        if test -n "$desc"
+            echo $desc
+            return
+        end
+    end
+    echo ""
+end
+
 function git_commit_and_push --argument-names msg
     git -C $REPO_DIR add plugins.conf mcp-servers.json 2>/dev/null
     if git -C $REPO_DIR diff --cached --quiet
@@ -165,13 +197,18 @@ switch "$subcmd"
         echo "Plugins in $CONF:"
         echo ""
         set -l entries (read_plugins)
+        set -l installed (claude plugin list 2>&1)
         for entry in $entries
             set -l parsed (parse_plugin $entry)
-            printf "  %-30s (%s)\n" $parsed[1] $parsed[2]
+            set -l name $parsed[1]
+            set -l mp $parsed[2]
+            set -l mark " "
+            if string match -q "*$name@*" -- $installed
+                set mark "✔"
+            end
+            set -l desc (get_plugin_description $name $mp)
+            printf "  %s %-24s  %s\n" $mark $name "$desc"
         end
-        echo ""
-        echo "Installed:"
-        claude plugin list 2>&1 | string replace -ra '^' '  '
 
     case sync
         echo "=== Pulling latest ==="
@@ -191,7 +228,7 @@ switch "$subcmd"
         echo "  (none)          Install/update all plugins from plugins.conf"
         echo "  add <plugin>    Add plugin, install, commit & push"
         echo "  remove <plugin> Remove plugin, uninstall, commit & push"
-        echo "  list            Show configured and installed plugins"
+        echo "  list            Show plugins with descriptions"
         echo "  sync            Pull from remote and install all plugins"
         echo "  help            Show this help"
         echo ""
