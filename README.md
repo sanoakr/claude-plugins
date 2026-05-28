@@ -1,5 +1,8 @@
 # claude-plugins
 
+![version](https://img.shields.io/badge/version-v0.9.0-blue)
+![license](https://img.shields.io/badge/license-MIT-green)
+
 Claude Code のプラグイン・MCP サーバーを一括管理するリポジトリ。
 複数 PC 間で `plugins.conf` を通じてプラグイン設定を共有する。
 
@@ -82,3 +85,13 @@ claude-plugins/
 ## 関連リポジトリ
 
 - [sanoakr/ai-skills](https://github.com/sanoakr/ai-skills) — Claude Code スキル管理
+
+## 変更履歴
+
+### v0.9.0 (2026-05-28)
+
+- Anthropic 公式プラグイン 7 種、OpenAI 1 種、サードパーティ/MCP 5 種を収録
+- `plugins.conf` によるプラグイン一括管理に対応
+- `add` / `remove` / `sync` / `list` サブコマンドを実装
+- `plugins.desc` による日本語説明の管理に対応
+- `mcp-servers.json` による MCP サーバー設定の共有に対応
