@@ -3,10 +3,11 @@
 ![version](https://img.shields.io/badge/version-v0.9.0-blue)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
-Claude Code のプラグイン・MCP サーバーを一括管理するリポジトリ。
-複数 PC 間で `plugins.conf` を通じてプラグイン設定を共有する。
+[日本語](./README.ja.md) | English
 
-## セットアップ
+Centralized management of Claude Code plugins and MCP servers, shared across multiple PCs via `plugins.conf`.
+
+## Setup
 
 ```fish
 git clone https://github.com/sanoakr/claude-plugins.git ~/claude-plugins
@@ -14,84 +15,83 @@ cd ~/claude-plugins
 ./setup-plugins.fish
 ```
 
-## 使い方
+## Usage
 
 ```fish
-# 全プラグインをインストール・更新
+# Install / update all plugins
 ./setup-plugins.fish
 
-# プラグイン一覧（日本語説明付き）
+# List plugins with descriptions
 ./setup-plugins.fish list
 
-# プラグインを追加（インストール → コミット → プッシュまで自動）
+# Add a plugin (installs, commits, and pushes)
 ./setup-plugins.fish add <plugin-name>
 ./setup-plugins.fish add <plugin-name>@<owner/marketplace-repo>
 
-# プラグインを削除（アンインストール → コミット → プッシュまで自動）
+# Remove a plugin (uninstalls, commits, and pushes)
 ./setup-plugins.fish remove <plugin-name>
 
-# リモートから pull して全プラグインを同期（別 PC での初回同期に）
+# Pull and sync all plugins from remote (initial sync on another PC)
 ./setup-plugins.fish sync
 ```
 
-## プラグイン一覧
+## Plugin List
 
-`plugins.conf` で管理。`./setup-plugins.fish list` で日本語説明付きの一覧を表示できる。
+Managed via `plugins.conf`. Run `./setup-plugins.fish list` to view with descriptions.
 
-### Anthropic 公式
+### Anthropic Official
 
-| プラグイン | 用途 |
-|-----------|------|
-| `feature-dev` | 機能開発を 7 フェーズに構造化し、専門エージェントで探索・設計・レビューを実行 |
-| `code-review` | 複数の専門エージェントによる自動コードレビュー（信頼度スコアで誤検出を抑制） |
-| `commit-commands` | コミット・プッシュ・PR 作成を自動化する Git ワークフローコマンド |
-| `frontend-design` | AI っぽくない個性的で高品質なフロントエンド UI を生成 |
-| `security-guidance` | ファイル編集時にコマンドインジェクション・XSS 等のセキュリティリスクを自動警告 |
-| `code-simplifier` | 最近変更されたコードを対象に、明瞭性・一貫性・保守性を向上させるリファクタリング |
-| `superpowers` | ブレインストーミング・サブエージェント駆動開発・体系的デバッグ・TDD を強化 |
+| Plugin | Description |
+|--------|-------------|
+| `feature-dev` | Structures feature development into 7 phases with specialized agents |
+| `code-review` | Automated code review by multiple specialized agents with confidence scoring |
+| `commit-commands` | Git workflow automation for commits, pushes, and PR creation |
+| `frontend-design` | Generates high-quality, distinctive frontend UI |
+| `security-guidance` | Auto-warns about security risks (command injection, XSS, etc.) on file edits |
+| `code-simplifier` | Refactors recently changed code for clarity, consistency, and maintainability |
+| `superpowers` | Enhances brainstorming, subagent-driven development, debugging, and TDD |
 
 ### OpenAI
 
-| プラグイン | 用途 |
-|-----------|------|
-| `codex` | OpenAI Codex を使ったコードレビューやタスク委任 |
+| Plugin | Description |
+|--------|-------------|
+| `codex` | Code review and task delegation via OpenAI Codex |
 
-### サードパーティ / MCP
+### Third-party / MCP
 
-| プラグイン | 用途 |
-|-----------|------|
-| `context7` | 最新のバージョン別ドキュメントとコード例をソースから直接取得する MCP サーバー |
-| `playwright` | Microsoft のブラウザ自動化 MCP サーバー（スクリーンショット・フォーム入力・E2E テスト） |
-| `github` | GitHub 公式 MCP サーバー（Issue・PR・レビュー・リポジトリ検索・API 連携） |
-| `cloudflare` | Cloudflare 開発プラットフォーム向けスキル（Workers・Durable Objects・Wrangler 等） |
-| `notion` | Notion ワークスペース連携（ページ検索・作成・更新・データベース管理） |
+| Plugin | Description |
+|--------|-------------|
+| `context7` | Fetches up-to-date versioned docs and code examples directly from source |
+| `playwright` | Microsoft's browser automation MCP (screenshots, forms, E2E testing) |
+| `github` | Official GitHub MCP (issues, PRs, reviews, repo search, API) |
+| `cloudflare` | Cloudflare dev platform skills (Workers, Durable Objects, Wrangler) |
+| `notion` | Notion workspace integration (search, create, update pages & databases) |
 
-### MCP サーバー
-
-`mcp-servers.json` に定義。セットアップ時に `~/.claude/mcp_servers.json` へマージされる。
-
-## ファイル構成
+## File Structure
 
 ```
 claude-plugins/
-├── setup-plugins.fish   # セットアップスクリプト
-├── plugins.conf         # プラグインリスト（これを編集して共有）
-├── plugins.desc         # 日本語説明ファイル
-├── mcp-servers.json     # MCP サーバー設定（共有用）
-├── README.md
-└── .gitignore
+├── setup-plugins.fish   # Setup script
+├── plugins.conf         # Plugin list (edit and share this)
+├── plugins.desc         # Japanese plugin descriptions
+├── mcp-servers.json     # MCP server config (shared)
+└── README.md
 ```
 
-## 関連リポジトリ
+## Related
 
-- [sanoakr/ai-skills](https://github.com/sanoakr/ai-skills) — Claude Code スキル管理
+- [sanoakr/ai-skills](https://github.com/sanoakr/ai-skills) — AI skill management for Claude Code
 
-## 変更履歴
+## Changelog
 
 ### v0.9.0 (2026-05-28)
 
-- Anthropic 公式プラグイン 7 種、OpenAI 1 種、サードパーティ/MCP 5 種を収録
-- `plugins.conf` によるプラグイン一括管理に対応
-- `add` / `remove` / `sync` / `list` サブコマンドを実装
-- `plugins.desc` による日本語説明の管理に対応
-- `mcp-servers.json` による MCP サーバー設定の共有に対応
+- 7 Anthropic official plugins, 1 OpenAI plugin, 5 third-party/MCP plugins
+- Bulk plugin management via `plugins.conf`
+- `add` / `remove` / `sync` / `list` subcommands
+- Japanese descriptions via `plugins.desc`
+- MCP server config sharing via `mcp-servers.json`
+
+## License
+
+MIT
